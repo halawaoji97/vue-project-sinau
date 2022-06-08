@@ -1,10 +1,32 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div>
+    <div class="container-fluid position-relative">
+      <div class="row fixed-top">
+        <div class="col-12">
+          <Header />
+        </div>
+      </div>
+      <div class="row py-5 my-2 vh-100 w-100 position-absolute start-0">
+        <Sidebar />
+        <div class="w-75">
+          <router-view />
+        </div>
+      </div>
+    </div>
   </div>
-  <router-view />
 </template>
+
+<script>
+import Header from './components/Header.vue';
+import Sidebar from './components/Sidebar.vue';
+export default {
+  name: 'App',
+  components: {
+    Header,
+    Sidebar,
+  },
+};
+</script>
 
 <style>
 #app {
@@ -17,6 +39,7 @@
 
 #nav {
   padding: 30px;
+  display: none;
 }
 
 #nav a {
