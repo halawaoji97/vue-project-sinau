@@ -29,7 +29,9 @@
         <!-- <Pagination /> -->
         <nav aria-label="Page navigation example">
           <ul class="pagination">
-            <li class="page-item">
+            <li
+              :class="!hasPrev ? 'disabled not-allowed page-item' : 'page-item'"
+            >
               <button
                 @click="onChangePage('prevPage')"
                 class="page-link"
@@ -54,8 +56,13 @@
                 >{{ pageNumber }}</a
               >
             </li>
-            <li class="page-item">
-              <button class="page-link" @click="onChangePage('nextPage')">
+            <li
+              :class="!hasNext ? 'disabled not-allowed page-item' : 'page-item'"
+            >
+              <button
+                class="page-link"
+                @click.prevent="onChangePage('nextPage')"
+              >
                 <span class="sr-only">Next </span>
                 <span aria-hidden="true">&raquo;</span>
               </button>
@@ -98,7 +105,9 @@ export default defineComponent({
 
     const items = computed(() => store.getters['user/users']);
     const fields = computed(() => app.users.fields);
-    const page = ref(1);
+    const page = computed(
+      () => store.getters['user/usersPaging']['x-pagination-page'] || 1,
+    );
     const perPage = ref(20);
     const itemsPaging = computed(
       () => store.getters['user/usersPaging']['x-pagination-pages'] || 100,
@@ -117,7 +126,7 @@ export default defineComponent({
       window.scrollTo(0, 0);
     };
 
-    const activePageNumber = ref(false);
+    const activePageNumber = ref(1);
 
     const pagesNumber = computed(() => {
       const pages = [];
@@ -132,33 +141,66 @@ export default defineComponent({
       return startNumber;
     });
 
-    const nextStep = () => {
-      if (page.value > itemsPaging.value) {
-        return;
-      }
-      page.value++;
-    };
+    const hasNext = computed(() => page.value < totalPages.value);
+    const hasPrev = computed(() => page.value > 1);
 
-    const prevStep = () => {
-      if (page.value === 1) {
-        return;
-      }
-      page.value--;
-    };
+    // const nextStep = () => {
+    //   if (page.value > itemsPaging.value) {
+    //     return;
+    //   }
+    //   page.value++;
+    // };
+
+    const nextPage = computed(() => parseInt(page.value) + 1);
+    const prevPage = computed(() => parseInt(page.value) - 1);
+    const isActivePage = computed(() => activePageNumber.value === 1);
+
+    // const prevStep = () => {
+    //   if (page.value === 1) {
+    //     return;
+    //   }
+    //   page.value--;
+    // };
 
     const clickPageNumber = (pageNumber) => {
-      page.value = pageNumber;
-      activePageNumber.value = true;
-      dispatchGetUsers();
+      page.value += pageNumber;
+      activePageNumber.value = pageNumber;
+      store.dispatch('user/getUsers', {
+        params: {
+          page: pageNumber,
+        },
+      });
+      console.log(isActivePage.value);
     };
 
     const onChangePage = (step) => {
+      // if (step === 'nextPage') {
+      //   nextStep();
+      // } else if (step === 'prevPage') {
+      //   prevStep();
+      // }
+      // console.log(hasNext.value);
+      // dispatchGetUsers();
+
+      // if (nextPage > 0 && nextPage < itemsPaging.value) {
       if (step === 'nextPage') {
-        nextStep();
-      } else if (step === 'prevPage') {
-        prevStep();
+        if (hasNext.value) {
+          store.dispatch('user/getUsers', {
+            params: {
+              page: nextPage.value,
+            },
+          });
+        }
       }
-      dispatchGetUsers();
+      if (step === 'prevPage') {
+        if (hasPrev.value) {
+          store.dispatch('user/getUsers', {
+            params: {
+              page: prevPage.value,
+            },
+          });
+        }
+      }
     };
 
     const paginate = (page_size, page_number) => {
@@ -193,13 +235,21 @@ export default defineComponent({
       handleAddUser,
       onPageChange,
       onChangePage,
-      nextStep,
-      prevStep,
+      nextPage,
+      prevPage,
       pagesNumber,
       clickPageNumber,
       activePageNumber,
       numberItem,
+      hasNext,
+      hasPrev,
     };
   },
 });
 </script>
+
+<style scoped>
+.not-allowed {
+  cursor: not-allowed;
+}
+</style>
