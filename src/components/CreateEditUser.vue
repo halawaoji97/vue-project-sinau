@@ -82,11 +82,11 @@
               <label class="form-check-label" for="inActive">Inactive</label>
             </div>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer d-flex justify-content-between">
             <button type="button" class="btn btn-secondary" @click="closeModal">
-              Close
+              Cancel
             </button>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Save</button>
           </div>
         </form>
       </div>
@@ -150,7 +150,7 @@ export default {
   padding: 20px;
   border: 1px solid #888;
   border-radius: 0.3rem;
-  width: 30%;
+  width: 50%;
 }
 
 .btn-close {
