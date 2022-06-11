@@ -41,9 +41,6 @@
                 <span class="sr-only">Previous</span>
               </button>
             </li>
-            <!-- <div v-if=>
-
-            </div> -->
             <li
               class="page-item"
               v-for="(pageNumber, index) in pagesNumber"
@@ -80,7 +77,7 @@ import Table from '@/components/Table.vue';
 import TableRow from '@/components/TableRow.vue';
 // import Pagination from '@/components/Pagination.vue';
 import { computed } from '@vue/reactivity';
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { app } from '@/config';
 import { useRouter } from 'vue-router';
@@ -108,25 +105,26 @@ export default defineComponent({
     const page = computed(
       () => store.getters['user/usersPaging']['x-pagination-page'] || 1,
     );
-    const perPage = ref(20);
+    const perPage = computed(
+      () => store.getters['user/usersPaging']['x-pagination-limit'] || 20,
+    );
     const itemsPaging = computed(
       () => store.getters['user/usersPaging']['x-pagination-pages'] || 100,
     );
+
     const totalPages = computed(() =>
       Math.ceil(itemsPaging.value / perPage.value),
     );
 
-    const dispatchGetUsers = () => {
+    const dispatchGetUsers = (page) => {
       store.dispatch('user/getUsers', {
         params: {
-          page: page.value,
+          page: page,
         },
       });
 
       window.scrollTo(0, 0);
     };
-
-    const activePageNumber = ref(1);
 
     const pagesNumber = computed(() => {
       const pages = [];
@@ -143,77 +141,25 @@ export default defineComponent({
 
     const hasNext = computed(() => page.value < totalPages.value);
     const hasPrev = computed(() => page.value > 1);
-
-    // const nextStep = () => {
-    //   if (page.value > itemsPaging.value) {
-    //     return;
-    //   }
-    //   page.value++;
-    // };
-
     const nextPage = computed(() => parseInt(page.value) + 1);
     const prevPage = computed(() => parseInt(page.value) - 1);
-    const isActivePage = computed(() => activePageNumber.value === 1);
-
-    // const prevStep = () => {
-    //   if (page.value === 1) {
-    //     return;
-    //   }
-    //   page.value--;
-    // };
 
     const clickPageNumber = (pageNumber) => {
       page.value += pageNumber;
-      activePageNumber.value = pageNumber;
-      store.dispatch('user/getUsers', {
-        params: {
-          page: pageNumber,
-        },
-      });
-      console.log(isActivePage.value);
+      dispatchGetUsers(pageNumber);
     };
 
     const onChangePage = (step) => {
-      // if (step === 'nextPage') {
-      //   nextStep();
-      // } else if (step === 'prevPage') {
-      //   prevStep();
-      // }
-      // console.log(hasNext.value);
-      // dispatchGetUsers();
-
-      // if (nextPage > 0 && nextPage < itemsPaging.value) {
       if (step === 'nextPage') {
         if (hasNext.value) {
-          store.dispatch('user/getUsers', {
-            params: {
-              page: nextPage.value,
-            },
-          });
+          dispatchGetUsers(nextPage.value);
         }
       }
       if (step === 'prevPage') {
         if (hasPrev.value) {
-          store.dispatch('user/getUsers', {
-            params: {
-              page: prevPage.value,
-            },
-          });
+          dispatchGetUsers(prevPage.value);
         }
       }
-    };
-
-    const paginate = (page_size, page_number) => {
-      let itemsToPaginate = items.value;
-      items.value = itemsToPaginate.slice(
-        (page_number - 1) * page_size,
-        page_number * page_size,
-      );
-    };
-
-    const onPageChange = (pageNumber) => {
-      console.log('pageNumber', pageNumber);
-      paginate(perPage.value, pageNumber);
     };
 
     const handleAddUser = () => {
@@ -221,11 +167,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      store.dispatch('user/getUsers', {
-        params: {
-          page: page.value || 1,
-        },
-      });
+      dispatchGetUsers(page.value || 1);
       store.dispatch('user/getAllPosts');
     });
 
@@ -233,13 +175,11 @@ export default defineComponent({
       items,
       fields,
       handleAddUser,
-      onPageChange,
       onChangePage,
       nextPage,
       prevPage,
       pagesNumber,
       clickPageNumber,
-      activePageNumber,
       numberItem,
       hasNext,
       hasPrev,
