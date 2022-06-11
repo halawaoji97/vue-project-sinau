@@ -1,13 +1,23 @@
 <template>
   <div class="my-5">
     <div class="card text-left">
-      <div
-        class="card-body d-flex justify-content-between flex-column align-items-start"
-      >
-        <h1 class="card-title text-uppercase fs-1">{{ user.name }}</h1>
-        <span>{{ user.email }}</span>
-        <span>{{ user.gender }}</span>
-        <span class="badge bg-primary my-2">{{ user.status }}</span>
+      <div class="card-body">
+        <div class="item">
+          <span class="">Name</span>
+          <span class="">: {{ user.name }}</span>
+        </div>
+        <div class="item">
+          <span class="">Email</span>
+          <span class="">: {{ user.email }}</span>
+        </div>
+        <div class="item">
+          <span class="">Gender</span>
+          <span class="">: {{ user.gender }}</span>
+        </div>
+        <div class="item">
+          <span class="">Status</span>
+          <span class="">: {{ user.status }}</span>
+        </div>
       </div>
     </div>
     <div class="d-flex justify-content-between mt-5">
@@ -19,7 +29,6 @@
       >
         Buat Post
       </button>
-      <CreateEditUserPost v-if="displayModalForm" />
     </div>
     <div class="w-100 text-left">
       <Table class="border my-3" :fields="fields">
@@ -32,11 +41,21 @@
       </Table>
     </div>
     <router-link to="/" class="btn btn-primary w-25">Back</router-link>
+    <Transition name="fade">
+      <CreateEditUserPost v-if="displayModalForm" />
+    </Transition>
   </div>
 </template>
 
 <script>
-import { defineComponent, onMounted, computed, ref, reactive } from 'vue';
+import {
+  defineComponent,
+  onMounted,
+  computed,
+  ref,
+  reactive,
+  Transition,
+} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { app } from '@/config';
@@ -49,6 +68,7 @@ export default defineComponent({
     TableRowPost,
     Table,
     CreateEditUserPost,
+    Transition,
   },
   setup() {
     const router = useRouter();
@@ -100,3 +120,13 @@ export default defineComponent({
   },
 });
 </script>
+
+<style>
+.item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  text-align: left;
+  text-transform: uppercase;
+}
+</style>
