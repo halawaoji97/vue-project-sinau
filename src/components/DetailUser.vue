@@ -1,5 +1,5 @@
 <template>
-  <div class="my-5">
+  <DefaultPage class="my-5">
     <div class="card text-left">
       <div class="card-body">
         <div class="item">
@@ -44,7 +44,7 @@
     <Transition name="fade">
       <CreateEditUserPost v-if="displayModalForm" />
     </Transition>
-  </div>
+  </DefaultPage>
 </template>
 
 <script>
@@ -62,6 +62,7 @@ import { app } from '@/config';
 import Table from '@/components/Table.vue';
 import TableRowPost from '@/components/TableRowPost.vue';
 import CreateEditUserPost from '@/components/CreateEditUserPost.vue';
+import DefaultPage from '@/components/DefaultPage.vue';
 
 export default defineComponent({
   components: {
@@ -69,6 +70,7 @@ export default defineComponent({
     Table,
     CreateEditUserPost,
     Transition,
+    DefaultPage,
   },
   setup() {
     const router = useRouter();
