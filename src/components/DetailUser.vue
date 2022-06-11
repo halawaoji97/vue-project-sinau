@@ -1,13 +1,27 @@
 <template>
   <div class="my-5">
     <div class="card w-75 text-left">
-      <div
-        class="card-body d-flex justify-content-between flex-column align-items-start"
-      >
-        <h1 class="card-title text-uppercase fs-1">{{ $route.params.name }}</h1>
-        <span>{{ $route.params.email }}</span>
-        <span>{{ $route.params.gender }}</span>
-        <span class="badge bg-primary my-2">{{ $route.params.status }}</span>
+      <div class="card-body">
+        <!-- <h1 class="card-title text-uppercase fs-1">{{ $route.params.name }}</h1> -->
+        <!-- <span>{{ $route.params.email }}</span> -->
+        <!-- <span>{{ $route.params.gender }}</span> -->
+        <!-- <span class="badge bg-primary my-2">{{ $route.params.status }}</span> -->
+        <div class="item">
+          <span class="">Name</span>
+          <span class="">: {{ $route.params.name }}</span>
+        </div>
+        <div class="item">
+          <span class="">Email</span>
+          <span class="">: {{ $route.params.email }}</span>
+        </div>
+        <div class="item">
+          <span class="">Gender</span>
+          <span class="">: {{ $route.params.gender }}</span>
+        </div>
+        <div class="item">
+          <span class="">Status</span>
+          <span class="">: {{ $route.params.status }}</span>
+        </div>
       </div>
     </div>
     <div class="d-flex justify-content-between mt-5">
@@ -134,4 +148,12 @@ export default {
   },
 };
 </script>
-<style lang=""></style>
+<style>
+.item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  text-align: left;
+  text-transform: uppercase;
+}
+</style>
