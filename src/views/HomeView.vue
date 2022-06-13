@@ -81,6 +81,11 @@ export default defineComponent({
         100,
     );
 
+    const numberItem = computed(() => {
+      let startNumber = (page.value - 1) * perPage.value;
+      return startNumber;
+    });
+
     const dispatchGetUsers = (page) => {
       store.dispatch('user/getUsers', {
         params: {
@@ -94,11 +99,6 @@ export default defineComponent({
     const onClickPageNumberHandler = (pageNumber) => {
       dispatchGetUsers(pageNumber);
     };
-
-    const numberItem = computed(() => {
-      let startNumber = (page.value - 1) * perPage.value;
-      return startNumber;
-    });
 
     const onPageChangedHandler = (page) => {
       dispatchGetUsers(page);

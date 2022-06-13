@@ -16,9 +16,13 @@
         v-for="(pageNumber, index) in pagesNumber"
         :key="index"
       >
-        <a href="#" class="page-link" @click="clickPageNumber(pageNumber)">{{
-          pageNumber
-        }}</a>
+        <a
+          href="#"
+          class="page-link rounded"
+          @click="clickPageNumber(pageNumber)"
+        >
+          {{ pageNumber }}
+        </a>
       </li>
       <li :class="!hasNext ? 'disabled not-allowed page-item' : 'page-item'">
         <button class="page-link" @click.prevent="pageChanged('nextPage')">
