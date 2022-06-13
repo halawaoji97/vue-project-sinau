@@ -1,133 +1,91 @@
 <template>
-  <nav aria-label="Page navigation example">
+  <nav aria-label="Page navigation">
     <ul class="pagination">
-      <li class="page-item">
+      <li :class="!hasPrev ? 'disabled not-allowed page-item' : 'page-item'">
         <button
+          @click="pageChanged('prevPage')"
           class="page-link"
-          :disabled="!hasPrev"
-          @click.prevent="changePage(prevPage)"
           aria-label="Previous"
         >
-          <!-- <span aria-hidden="true">&laquo;</span> -->
-          <span class="">Previous</span>
+          <span aria-hidden="true">&laquo; </span>
+          <span class="sr-only">Previous</span>
         </button>
       </li>
-      <li class="page-item">
-        <a
-          class="page-link"
-          v-if="hasFirst"
-          @click.prevent="changePage(1)"
-          href="#"
-          >1</a
-        >
+      <li
+        class="page-item"
+        v-for="(pageNumber, index) in pagesNumber"
+        :key="index"
+      >
+        <a href="#" class="page-link" @click="clickPageNumber(pageNumber)">{{
+          pageNumber
+        }}</a>
       </li>
-      c
-      <li class="page-item">
-        <a
-          class="page-link"
-          v-for="page in pages"
-          :key="page"
-          @click.prevent="changePage(page)"
-          >{{ page }}</a
-        >
-      </li>
-      <li class="page-item">
-        <button
-          class="page-link"
-          :disabled="!hasPrev"
-          @click.prevent="changePage(prevPage)"
-          aria-label="Previous"
-        >
-          <!-- <span aria-hidden="true">&laquo;</span> -->
-          <span class="">Previous</span>
+      <li :class="!hasNext ? 'disabled not-allowed page-item' : 'page-item'">
+        <button class="page-link" @click.prevent="pageChanged('nextPage')">
+          <span class="sr-only">Next </span>
+          <span aria-hidden="true">&raquo;</span>
         </button>
       </li>
     </ul>
   </nav>
 </template>
 <script>
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
-    current: {
+    itemsPaging: {
+      type: Number,
+      default: 200,
+    },
+    page: {
       type: Number,
       default: 1,
     },
-    total: {
-      type: Number,
-      default: 0,
-    },
-    currentTotal: {
-      type: Number,
-      default: 0,
-    },
     perPage: {
       type: Number,
-      default: 10,
-    },
-    pageRange: {
-      type: Number,
-      default: 2,
-    },
-    textBeforeInput: {
-      type: String,
-      default: 'Go to page',
-    },
-    textAfterInput: {
-      type: String,
-      default: 'Go',
+      default: 20,
     },
   },
-  data() {
-    return {
-      input: '',
-    };
-  },
-  computed: {
-    pages() {
+  setup(props, { emit }) {
+    const totalPages = computed(() =>
+      Math.ceil(props.itemsPaging / props.perPage),
+    );
+    const hasNext = computed(() => props.page < totalPages.value);
+    const hasPrev = computed(() => props.page > 1);
+    const nextPage = computed(() => props.page + 1);
+    const prevPage = computed(() => props.page - 1);
+
+    const pagesNumber = computed(() => {
       const pages = [];
-      for (let i = this.rangeStart; i <= this.rangeEnd; i++) {
+      for (let i = 1; i <= totalPages.value; i++) {
         pages.push(i);
       }
       return pages;
-    },
-    rangeStart() {
-      const start = this.current - this.pageRange;
-      return start > 0 ? start : 1;
-    },
-    rangeEnd() {
-      const end = this.current + this.pageRange;
-      return end < this.totalPages ? end : this.totalPages;
-    },
-    totalPages() {
-      return Math.ceil(this.total / this.perPage);
-    },
-    nextPage() {
-      return this.current + 1;
-    },
-    prevPage() {
-      return this.current - 1;
-    },
-    hasFirst() {
-      return this.rangeStart !== 1;
-    },
-    hasLast() {
-      return this.rangeEnd < this.totalPages;
-    },
-    hasPrev() {
-      return this.current > 1;
-    },
-    hasNext() {
-      return this.current < this.totalPages;
-    },
-  },
-  methods: {
-    changePage(page) {
-      if (page > 0 && page <= this.totalPages) {
-        this.$emit('page-changed', page);
+    });
+
+    const clickPageNumber = (pageNumber) => {
+      emit('click-page-number', pageNumber);
+    };
+
+    const pageChanged = (step) => {
+      if (step === 'nextPage') {
+        emit('page-changed', nextPage.value);
       }
-    },
+      if (step === 'prevPage') {
+        emit('page-changed', prevPage.value);
+      }
+    };
+
+    return {
+      pagesNumber,
+      hasNext,
+      hasPrev,
+      nextPage,
+      prevPage,
+      clickPageNumber,
+      pageChanged,
+    };
   },
 });
 </script>

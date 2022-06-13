@@ -1,4 +1,5 @@
 <template>
+  <!-- <router-view> -->
   <div class="container-fluid position-relative">
     <div class="w-100 fixed-top">
       <div class=" ">
@@ -6,17 +7,22 @@
       </div>
     </div>
     <div class="py-5 my-2 vh-100 w-100 start-0">
-      <!-- <div :class="sidebar border vh-100"> -->
       <div
         :class="isOpenSidebar ? 'border sidebar active' : ' sidebar border  '"
       >
         <Sidebar @toggle-sidebar="toggleSidebarHandler" />
       </div>
       <main>
-        <router-view :isOpenSidebar="isOpenSidebar" />
+        <!-- <router-view :isOpenSidebar="isOpenSidebar" /> -->
+        <router-view v-slot="{ Component }">
+          <transition name="fade" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
       </main>
     </div>
   </div>
+  <!-- </router-view> -->
 </template>
 
 <script>
@@ -66,5 +72,13 @@ main {
 }
 .active {
   transform: translateX(0);
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease-in-out;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

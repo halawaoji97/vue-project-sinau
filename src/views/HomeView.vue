@@ -25,43 +25,13 @@
           />
         </template>
       </Table>
-      <!-- <Pagination /> -->
-      <nav aria-label="Page navigation example">
-        <ul class="pagination">
-          <li
-            :class="!hasPrev ? 'disabled not-allowed page-item' : 'page-item'"
-          >
-            <button
-              @click="onChangePage('prevPage')"
-              class="page-link"
-              aria-label="Previous"
-            >
-              <span aria-hidden="true">&laquo; </span>
-              <span class="sr-only">Previous</span>
-            </button>
-          </li>
-          <li
-            class="page-item"
-            v-for="(pageNumber, index) in pagesNumber"
-            :key="index"
-          >
-            <a
-              href="#"
-              class="page-link"
-              @click="clickPageNumber(pageNumber)"
-              >{{ pageNumber }}</a
-            >
-          </li>
-          <li
-            :class="!hasNext ? 'disabled not-allowed page-item' : 'page-item'"
-          >
-            <button class="page-link" @click.prevent="onChangePage('nextPage')">
-              <span class="sr-only">Next </span>
-              <span aria-hidden="true">&raquo;</span>
-            </button>
-          </li>
-        </ul>
-      </nav>
+      <Pagination
+        :itemsPaging="itemsPaging"
+        :page="page"
+        :perPage="perPage"
+        @click-page-number="onClickPageNumberHandler"
+        @page-changed="onPageChangedHandler"
+      />
     </template>
   </DefaultPage>
 </template>
@@ -70,7 +40,7 @@
 import DefaultPage from '@/components/DefaultPage.vue';
 import Table from '@/components/Table.vue';
 import TableRow from '@/components/TableRow.vue';
-// import Pagination from '@/components/Pagination.vue';
+import Pagination from '@/components/Pagination.vue';
 import { computed } from '@vue/reactivity';
 import { defineComponent, onMounted } from 'vue';
 import { useStore } from 'vuex';
@@ -82,7 +52,7 @@ export default defineComponent({
     DefaultPage,
     Table,
     TableRow,
-    // Pagination,
+    Pagination,
   },
   props: {
     item: {
@@ -98,17 +68,17 @@ export default defineComponent({
     const items = computed(() => store.getters['user/users']);
     const fields = computed(() => app.users.fields);
     const page = computed(
-      () => store.getters['user/usersPaging']['x-pagination-page'] || 1,
+      () =>
+        parseInt(store.getters['user/usersPaging']['x-pagination-page']) || 1,
     );
     const perPage = computed(
-      () => store.getters['user/usersPaging']['x-pagination-limit'] || 20,
+      () =>
+        parseInt(store.getters['user/usersPaging']['x-pagination-limit']) || 20,
     );
     const itemsPaging = computed(
-      () => store.getters['user/usersPaging']['x-pagination-pages'] || 100,
-    );
-
-    const totalPages = computed(() =>
-      Math.ceil(itemsPaging.value / perPage.value),
+      () =>
+        parseInt(store.getters['user/usersPaging']['x-pagination-pages']) ||
+        100,
     );
 
     const dispatchGetUsers = (page) => {
@@ -121,40 +91,17 @@ export default defineComponent({
       window.scrollTo(0, 0);
     };
 
-    const pagesNumber = computed(() => {
-      const pages = [];
-      for (let i = 1; i <= totalPages.value; i++) {
-        pages.push(i);
-      }
-      return pages;
-    });
+    const onClickPageNumberHandler = (pageNumber) => {
+      dispatchGetUsers(pageNumber);
+    };
 
     const numberItem = computed(() => {
       let startNumber = (page.value - 1) * perPage.value;
       return startNumber;
     });
 
-    const hasNext = computed(() => page.value < totalPages.value);
-    const hasPrev = computed(() => page.value > 1);
-    const nextPage = computed(() => parseInt(page.value) + 1);
-    const prevPage = computed(() => parseInt(page.value) - 1);
-
-    const clickPageNumber = (pageNumber) => {
-      page.value += pageNumber;
-      dispatchGetUsers(pageNumber);
-    };
-
-    const onChangePage = (step) => {
-      if (step === 'nextPage') {
-        if (hasNext.value) {
-          dispatchGetUsers(nextPage.value);
-        }
-      }
-      if (step === 'prevPage') {
-        if (hasPrev.value) {
-          dispatchGetUsers(prevPage.value);
-        }
-      }
+    const onPageChangedHandler = (page) => {
+      dispatchGetUsers(page);
     };
 
     const handleAddUser = () => {
@@ -170,14 +117,12 @@ export default defineComponent({
       items,
       fields,
       handleAddUser,
-      onChangePage,
-      nextPage,
-      prevPage,
-      pagesNumber,
-      clickPageNumber,
       numberItem,
-      hasNext,
-      hasPrev,
+      itemsPaging,
+      page,
+      perPage,
+      onPageChangedHandler,
+      onClickPageNumberHandler,
     };
   },
 });

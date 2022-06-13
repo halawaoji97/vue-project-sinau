@@ -52,4 +52,11 @@ const router = createRouter({
   ],
 });
 
+// router.beforeEach((to, from, next) => {
+//   document.title = to.meta.title;
+//   console.log(to);
+//   console.log(from);
+//   next();
+// });
+
 export default router;

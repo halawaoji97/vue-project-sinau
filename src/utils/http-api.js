@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+// axios.defaults.baseURL = import.meta.env.BASE_URL;
+
 const client = axios.create({
   baseURL: 'https://gorest.co.in/public/v2/',
   headers: {

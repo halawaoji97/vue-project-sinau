@@ -1,5 +1,4 @@
 <template>
-  <!-- <div class="container default-page shadow-lg p-3 bg-gray rounded mt-5"> -->
   <div
     :class="
       isOpenSidebar
@@ -7,22 +6,20 @@
         : 'container default-page shadow-lg p-3 bg-gray rounded mt-5 '
     "
   >
-    <transition name="fade" mode="out-in">
-      <div class="row">
-        <div class="col-12">
-          <slot name="title" />
-          <slot name="content" />
-          <slot />
-        </div>
+    <div class="row">
+      <div class="col-12">
+        <slot name="title" />
+        <slot name="content" />
+        <slot />
       </div>
-    </transition>
+    </div>
   </div>
 </template>
 <script>
-import { defineComponent, Transition } from 'vue';
+import { defineComponent } from 'vue';
 export default defineComponent({
   components: {
-    Transition,
+    // Transition,
   },
   props: {
     isOpenSidebar: {
