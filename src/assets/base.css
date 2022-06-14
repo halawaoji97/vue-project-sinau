@@ -72,14 +72,15 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+  margin: 0;
 }
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s ease;
+  transition: all 0.5s ease-in-out;
 }
-
-.fade-enter-from,
+.fade-enter,
 .fade-leave-to {
   opacity: 0;
 }

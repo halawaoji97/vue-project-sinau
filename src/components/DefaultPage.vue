@@ -2,8 +2,8 @@
   <div
     :class="
       isOpenSidebar
-        ? 'container default-page shadow-lg p-3 bg-gray rounded mt-5 sizing'
-        : 'container default-page shadow-lg p-3 bg-gray rounded mt-5 '
+        ? 'container default-page shadow-lg bg-gray rounded mt-5 py-4 sizing'
+        : 'container default-page shadow-lg bg-gray rounded mt-5 py-4 '
     "
   >
     <div class="row">

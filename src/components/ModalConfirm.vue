@@ -1,5 +1,5 @@
 <template>
-  <div class="position-fixed modal-dialog-container">
+  <div class="position-fixed modal-dialog-container shadow-lg">
     <div class="modal-dialog-content">
       <div class="modal-content">
         <div class="modal-header">

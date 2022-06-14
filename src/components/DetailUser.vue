@@ -1,32 +1,28 @@
 <template>
-  <DefaultPage class="my-5">
-    <div class="card text-left">
+  <DefaultPage class="my-5 shadow-lg">
+    <div class="card text-left shadow-lg w-75">
       <div class="card-body">
         <div class="item">
-          <span class="">Name</span>
+          <span class="fw-bold text-secondary">Name</span>
           <span class="">: {{ user.name }}</span>
         </div>
         <div class="item">
-          <span class="">Email</span>
+          <span class="fw-bold text-secondary">Email</span>
           <span class="">: {{ user.email }}</span>
         </div>
         <div class="item">
-          <span class="">Gender</span>
+          <span class="fw-bold text-secondary">Gender</span>
           <span class="">: {{ user.gender }}</span>
         </div>
         <div class="item">
-          <span class="">Status</span>
+          <span class="fw-bold text-secondary">Status</span>
           <span class="">: {{ user.status }}</span>
         </div>
       </div>
     </div>
     <div class="d-flex justify-content-between mt-5">
-      <h1 class="text-start h2 text-uppercase">post Pengguna</h1>
-      <button
-        type="button"
-        class="btn btn-primary btn-lg"
-        @click="addPost(user.id)"
-      >
+      <h1 class="text-start h3 text-uppercase">post Pengguna</h1>
+      <button type="button" class="btn btn-primary btn-lg" @click="addPost">
         Buat Post
       </button>
     </div>
@@ -41,21 +37,17 @@
       </Table>
     </div>
     <router-link to="/" class="btn btn-primary w-25">Back</router-link>
-    <Transition name="fade">
-      <CreateEditUserPost v-if="displayModalForm" />
-    </Transition>
+    <CreateEditUserPost
+      v-if="displayModalForm"
+      @on-cancel="onCancel"
+      @on-confirm="onConfirm"
+      :params="params"
+    />
   </DefaultPage>
 </template>
 
 <script>
-import {
-  defineComponent,
-  onMounted,
-  computed,
-  ref,
-  reactive,
-  Transition,
-} from 'vue';
+import { defineComponent, onMounted, computed, ref, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { app } from '@/config';
@@ -69,7 +61,6 @@ export default defineComponent({
     TableRowPost,
     Table,
     CreateEditUserPost,
-    Transition,
     DefaultPage,
   },
   setup() {
@@ -86,6 +77,7 @@ export default defineComponent({
     const params = reactive({ ...initialState });
 
     const displayModalForm = ref(false);
+    const selectedId = ref(null);
 
     const fields = computed(() => app.users.fieldsPost);
 
@@ -95,15 +87,24 @@ export default defineComponent({
       posts.value.find((post) => post.user_id === parseInt(paramsId)),
     );
 
-    const addPost = (id) => {
-      router.push({
-        path: 'create-user-post',
-        name: 'CreateUserPost',
-        params: {
-          id,
-        },
+    const onCancel = () => {
+      displayModalForm.value = false;
+    };
+
+    const onConfirm = (data) => {
+      store.dispatch('user/addUserPost', {
+        id: parseInt(paramsId),
+        post: data,
       });
+      store.dispatch('user/getAllPosts');
+      store.dispatch('user/getUserPost', paramsId);
+      displayModalForm.value = false;
+    };
+
+    const addPost = () => {
       displayModalForm.value = true;
+      selectedId.value = paramsId;
+      store.dispatch('user/getUserPost', paramsId);
     };
 
     onMounted(() => {
@@ -118,6 +119,8 @@ export default defineComponent({
       userPost,
       fields,
       params,
+      onCancel,
+      onConfirm,
     };
   },
 });

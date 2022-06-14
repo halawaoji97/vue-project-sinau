@@ -1,11 +1,11 @@
 <template>
-  <div id="form-modal" class="modal-dialog-container" v-if="displayModalForm">
+  <div id="form-modal" class="modal-dialog-container">
     <div class="modal-dialog-content">
       <div class="modal-dialog-header">
         <h4 class="text-center text-uppercase">Tambah Post</h4>
       </div>
       <div class="modal-dialog-body">
-        <form @submit.prevent="saveUserPost">
+        <form @submit.prevent="onConfirm">
           <div class="mb-3 d-flex flex-column align-items-start">
             <label for="title" class="form-label">Title</label>
             <input
@@ -31,7 +31,7 @@
             />
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" @click="closeModal">
+            <button type="button" class="btn btn-secondary" @click="onCancel">
               Close
             </button>
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -43,50 +43,43 @@
 </template>
 
 <script>
-import { computed, reactive, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { computed, defineComponent } from 'vue';
 import { useStore } from 'vuex';
 
-export default {
-  setup() {
-    const initialState = {
-      title: '',
-      body: '',
-    };
-    const router = useRouter();
-    const route = useRoute();
+export default defineComponent({
+  props: {
+    initialState: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  setup(props, { emit }) {
     const store = useStore();
 
-    const displayModalForm = ref(true);
-    const params = reactive({ ...initialState });
+    const params = computed(() => {
+      return {
+        ...props.initialState,
+      };
+    });
 
-    const idParams = computed(() => route.params.id);
+    const onCancel = () => {
+      console.log('cancel');
+      emit('on-cancel');
+    };
 
-    const closeModal = () => {
-      displayModalForm.value = false;
-      router.replace({ path: `/view/${idParams.value}` });
-      store.dispatch('user/getAllPosts');
+    const onConfirm = () => {
+      console.log('confirm', params.value);
+      emit('on-confirm', params.value);
     };
-    const saveUserPost = () => {
-      store
-        .dispatch('user/addUserPost', {
-          id: parseInt(idParams.value),
-          post: params,
-        })
-        .then(() => {
-          closeModal();
-        });
-    };
+
     return {
-      displayModalForm,
       store,
-      closeModal,
-      saveUserPost,
       params,
-      idParams,
+      onCancel,
+      onConfirm,
     };
   },
-};
+});
 </script>
 
 <style scoped>

@@ -1,7 +1,7 @@
 <template>
-  <nav aria-label="Page navigation">
+  <nav aria-label="Page navigation shadow-lg">
     <ul class="pagination">
-      <li :class="!hasPrev ? 'disabled not-allowed page-item' : 'page-item'">
+      <li :class="!hasPrev ? 'disabled not-allowed page-item' : 'page-item '">
         <button
           @click="pageChanged('prevPage')"
           class="page-link"

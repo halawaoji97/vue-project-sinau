@@ -1,7 +1,7 @@
 <template>
-  <nav class="navbar navbar-light py-3 bg-light border-bottom">
+  <nav class="navbar navbar-light py-3 w-100">
     <div
-      class="container position-relative d-flex justify-content-between align-items-center"
+      class="container-fluid d-flex justify-content-between align-items-center"
     >
       <div class="d-flex align-items-center">
         <button
@@ -50,13 +50,14 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.humburger {
-  z-index: 1;
-  width: 44px;
-  height: 44px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: transform 0.3s ease-in-out;
+.humburger,
+.navbar-brand {
+  display: none;
+}
+@media screen and (max-width: 768px) {
+  .humburger,
+  .navbar-brand {
+    display: block;
+  }
 }
 </style>
