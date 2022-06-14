@@ -63,12 +63,10 @@ export default defineComponent({
     });
 
     const onCancel = () => {
-      console.log('cancel');
       emit('on-cancel');
     };
 
     const onConfirm = () => {
-      console.log('confirm', params.value);
       emit('on-confirm', params.value);
     };
 

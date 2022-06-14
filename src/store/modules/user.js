@@ -50,18 +50,8 @@ const mutations = {
 };
 
 const actions = {
-  // async getUsers({ commit }, { params, page }) {
-  //   await getUsers('/users').then((response) => {
-  //     console.log('response', response);
-  //     commit('SET_USERS', response.data);
-  //     commit('SET_USERS_PAGING', response.headers);
-  //     commit('SET_CURRENT_PAGE', response.headers['x-links-current']);
-  //   });
-  // },
-
   async getUsers({ commit }, { params = {} }) {
     await getUsers(`/users${serializeQueryParams(params)}`).then((response) => {
-      console.log('response', response);
       commit('SET_USERS', response.data);
       commit('SET_USERS_PAGING', response.headers);
       commit('SET_CURRENT_PAGE', response.headers['x-links-current']);

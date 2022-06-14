@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-// axios.defaults.baseURL = import.meta.env.BASE_URL;
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
 const client = axios.create({
-  baseURL: 'https://gorest.co.in/public/v2/',
+  baseURL: import.meta.env.VITE_BASE_URL,
   headers: {
-    Authorization: `Bearer 790638a17d3f8b276c0c93c8afc07fe62576b6ba1507b1773854019d4026da24`,
+    Authorization: `Bearer ${import.meta.env.VITE_TOKEN}`,
     'Content-type': 'application/json',
   },
 });
